@@ -162,12 +162,15 @@ func NewConfigFile(ctx *pulumi.Context,
 		}
 
 		// Parse and decode the YAML files.
-		parseOpts := append(opts, pulumi.Parent(configFile))
+		parseOpts, err := GetChildOptions(configFile, opts)
+		if err != nil {
+			return nil, err
+		}
 		rs, err := parseDecodeYamlFiles(ctx, &ConfigGroupArgs{
 			Files:           []string{args.File},
 			Transformations: args.Transformations,
 			ResourcePrefix:  args.ResourcePrefix,
-		}, true, parseOpts...)
+		}, false, parseOpts...)
 		if err != nil {
 			return nil, err
 		}
